@@ -39,3 +39,22 @@ let books = [
     download_count: 12764,
   },
 ];
+
+// Loop over all the books beginning at the first (0) element and ending with
+// the last (books.length) element.
+for (let i = 0; i < books.length; i++) {
+  // Grab a reference to the current book.
+  let book = books[i];
+
+  // `document.write()` is a "violation" according to the developer console, but
+  // it's ok for the purposes of this demonstration.
+  document.write('<h1>' + book.title + '</h1>');
+  document.write('<div>');
+  document.write('downloads: ' + book.download_count);
+
+  // Check to see if the number of downloads is big. Out put a message if it is.
+  if (book.download_count > 10000) {
+    document.write(", <strong>Wow, that's a lot of downloads!</strong>");
+  }
+  document.write('</div>');
+}
