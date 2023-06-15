@@ -42,10 +42,7 @@ let books = [
 
 // Loop over all the books beginning at the first (0) element and ending with
 // the last (books.length) element.
-for (let i = 0; i < books.length; i++) {
-  // Grab a reference to the current book.
-  let book = books[i];
-
+books.forEach(function (book) {
   // `document.write()` is a "violation" according to the developer console, but
   // it's ok for the purposes of this demonstration.
   document.write('<h1>' + book.title + '</h1>');
@@ -57,4 +54,4 @@ for (let i = 0; i < books.length; i++) {
     document.write(", <strong>Wow, that's a lot of downloads!</strong>");
   }
   document.write('</div>');
-}
+});
