@@ -53,16 +53,42 @@ let bookRepository = (function () {
     }
   }
 
+  // Find books by title.
+  // Returns an array of books that were found.
   function findBooks(title) {
     return books.filter(function (book) {
       return book.title.toLowerCase() === title.toLowerCase();
     });
   }
 
+  // Adds a listItem (<li>) to the list (<ul.book-list>)
+  function addListItem(book) {
+    let list = document.querySelector('.book-list');
+    let listItem = document.createElement('li');
+    let button = document.createElement('button');
+    // Set the button text to the title of the book
+    button.innerText = book.title;
+
+    listItem.appendChild(button);
+    list.appendChild(listItem);
+
+    button.classList.add('book-title-btn');
+    // Add a click listener to the existing button created above
+    button.addEventListener('click', function (event) {
+      showDetails(book);
+    });
+  }
+
+  // For now, just log out the book to the console.  More to come.
+  function showDetails(book) {
+    console.log(book);
+  }
+
   return {
     getAll,
     add,
     findBooks,
+    addListItem,
   };
 })();
 
@@ -84,17 +110,7 @@ bookRepository.add({
 // Loop over all the books beginning at the first (0) element and ending with
 // the last (books.length) element.
 bookRepository.getAll().forEach(function (book) {
-  // `document.write()` is a "violation" according to the developer console, but
-  // it's ok for the purposes of this demonstration.
-  document.write('<h1>' + book.title + '</h1>');
-  document.write('<div>');
-  document.write('downloads: ' + book.download_count);
-
-  // Check to see if the number of downloads is big. Out put a message if it is.
-  if (book.download_count > 10000) {
-    document.write(", <strong>Wow, that's a lot of downloads!</strong>");
-  }
-  document.write('</div>');
+  bookRepository.addListItem(book);
 });
 
 console.log(bookRepository.findBooks('The Jungle'));
