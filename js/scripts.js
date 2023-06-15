@@ -53,9 +53,16 @@ let bookRepository = (function () {
     }
   }
 
+  function findBooks(title) {
+    return books.filter(function (book) {
+      return book.title.toLowerCase() === title.toLowerCase();
+    });
+  }
+
   return {
     getAll,
     add,
+    findBooks,
   };
 })();
 
@@ -89,3 +96,5 @@ bookRepository.getAll().forEach(function (book) {
   }
   document.write('</div>');
 });
+
+console.log(bookRepository.findBooks('The Jungle'));
