@@ -48,7 +48,9 @@ let bookRepository = (function () {
 
   // Add a book to the list of books.
   function add(book) {
-    books.push(book);
+    if (typeof book === 'object') {
+      books.push(book);
+    }
   }
 
   return {
