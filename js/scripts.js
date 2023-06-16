@@ -1,45 +1,6 @@
 let bookRepository = (function () {
-  let books = [
-    {
-      title: 'Great Expectations',
-      authors: [
-        {
-          name: 'Dickens, Charles',
-          birth_year: 1812,
-          death_year: 1870,
-        },
-      ],
-      languages: ['en'],
-      copyright: false,
-      download_count: 15223,
-    },
-    {
-      title: 'The Jungle',
-      authors: [
-        {
-          name: 'Sinclair, Upton',
-          birth_year: 1878,
-          death_year: 1968,
-        },
-      ],
-      languages: ['en'],
-      copyright: false,
-      download_count: 2974,
-    },
-    {
-      title: 'Adventures of Huckleberry Finn',
-      authors: [
-        {
-          name: 'Twain, Mark',
-          birth_year: 1835,
-          death_year: 1910,
-        },
-      ],
-      languages: ['en'],
-      copyright: false,
-      download_count: 12764,
-    },
-  ];
+  let books = [];
+  let apiUrl = 'https://gutendex.com/books';
 
   // Return the full list of books currently in the list.
   function getAll() {
@@ -81,7 +42,76 @@ let bookRepository = (function () {
 
   // For now, just log out the book to the console.  More to come.
   function showDetails(book) {
-    console.log(book);
+    loadCover(book).then(function () {
+      console.log(book);
+    });
+  }
+
+  // Fetch a list of books.  By default, only 32 books are fetched and then
+  // the next 'page' would have to be fetched separately.
+  function loadList() {
+    showLoadingMessage();
+    return fetch(apiUrl)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (json) {
+        json.results.forEach(function (item) {
+          let book = {
+            id: item.id,
+            title: item.title,
+            authors: item.authors,
+          };
+          add(book);
+        });
+      })
+      .catch(function (e) {
+        console.error(e);
+      })
+      .finally(function () {
+        hideLoadingMessage();
+      });
+  }
+
+  // The cover url could've been used from the first fetch, but I implemented a
+  // second fetch to get just the single book to fulfill the requirements of the
+  // exercise.
+  function loadCover(item) {
+    showLoadingMessage();
+    // The individual book is accessed at the same apiUrl, but with the 'id' of
+    // the book appended after a slash.
+    let url = `${apiUrl}/${item.id}`;
+    return fetch(url)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (book) {
+        // The cover url is in an embedded object called 'formats'. Use bracket
+        // notation to access the key that holds the url property.
+        item.coverUrl = book.formats['image/jpeg'];
+      })
+      .catch(function (e) {
+        console.error(e);
+      })
+      .finally(function () {
+        hideLoadingMessage();
+      });
+  }
+
+  // Show a loading message. (Needs to be formatted better and not push down
+  // the list of books when loadCover is called.)
+  function showLoadingMessage() {
+    let loading = document.createElement('div');
+    loading.setAttribute('id', 'loading');
+    loading.innerText = 'Loading data...';
+    let body = document.querySelector('body');
+    body.insertBefore(loading, body.firstChild);
+  }
+
+  // Hide the loading message.
+  function hideLoadingMessage() {
+    let loading = document.querySelector('#loading');
+    loading.parentElement.removeChild(loading);
   }
 
   return {
@@ -89,28 +119,16 @@ let bookRepository = (function () {
     add,
     findBooks,
     addListItem,
+    loadList,
+    loadCover,
   };
 })();
 
-// Test adding a book to the list. This is just to see if the add() method works
-bookRepository.add({
-  title: 'The Keep',
-  authors: [
-    {
-      name: 'Wilson, F. Paul',
-      birth_year: 1946,
-      death_year: null,
-    },
-  ],
-  languages: ['en'],
-  copyright: true,
-  download_count: 19000,
+// Load the payload of books...
+bookRepository.loadList().then(function () {
+  // Then get all the books in the payload...
+  bookRepository.getAll().forEach(function (book) {
+    // And add each one to the list of books
+    bookRepository.addListItem(book);
+  });
 });
-
-// Loop over all the books beginning at the first (0) element and ending with
-// the last (books.length) element.
-bookRepository.getAll().forEach(function (book) {
-  bookRepository.addListItem(book);
-});
-
-console.log(bookRepository.findBooks('The Jungle'));
