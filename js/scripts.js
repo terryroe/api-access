@@ -1,6 +1,6 @@
 let bookRepository = (function () {
-  let books = [];
-  let apiUrl = 'https://gutendex.com/books';
+  const books = [];
+  const apiUrl = 'https://gutendex.com/books';
 
   // Return the full list of books currently in the list.
   function getAll() {
@@ -24,9 +24,9 @@ let bookRepository = (function () {
 
   // Adds a listItem (<li>) to the list (<ul.book-list>)
   function addListItem(book) {
-    let list = document.querySelector('.book-list');
-    let listItem = document.createElement('li');
-    let button = document.createElement('button');
+    const list = document.querySelector('.book-list');
+    const listItem = document.createElement('li');
+    const button = document.createElement('button');
     // Set the button text to the title of the book
     button.innerText = book.title;
 
@@ -43,7 +43,7 @@ let bookRepository = (function () {
   // For now, just log out the book to the console.  More to come.
   function showDetails(book) {
     loadCover(book).then(function () {
-      console.log(book);
+      showModal(book);
     });
   }
 
@@ -80,7 +80,7 @@ let bookRepository = (function () {
     showLoadingMessage();
     // The individual book is accessed at the same apiUrl, but with the 'id' of
     // the book appended after a slash.
-    let url = `${apiUrl}/${item.id}`;
+    const url = `${apiUrl}/${item.id}`;
     return fetch(url)
       .then(function (response) {
         return response.json();
@@ -101,18 +101,80 @@ let bookRepository = (function () {
   // Show a loading message. (Needs to be formatted better and not push down
   // the list of books when loadCover is called.)
   function showLoadingMessage() {
-    let loading = document.createElement('div');
+    const loading = document.createElement('div');
     loading.setAttribute('id', 'loading');
     loading.innerText = 'Loading data...';
-    let body = document.querySelector('body');
+    const body = document.querySelector('body');
     body.insertBefore(loading, body.firstChild);
   }
 
   // Hide the loading message.
   function hideLoadingMessage() {
-    let loading = document.querySelector('#loading');
+    const loading = document.querySelector('#loading');
     loading.parentElement.removeChild(loading);
   }
+
+  // Define the modal container element here so it can be used in multiple
+  // functions below.
+  const modalContainer = document.querySelector('#modal-container');
+
+  function showModal(book) {
+    modalContainer.innerHTML = '';
+
+    // Create and set up the modal element.
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    // Set up the close button, it will be added to the modal a little later.
+    const closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'Close';
+    closeButtonElement.addEventListener('click', hideModal);
+
+    // Set up the title element, to be added later.
+    const titleElement = document.createElement('h1');
+    titleElement.innerText = book.title;
+
+    // Set up the author element, to be added later.
+    const authorElement = document.createElement('p');
+    authorElement.innerText = book.authors[0]?.name;
+
+    // Set up the cover image element, to be added later.
+    const imgElement = document.createElement('img');
+    imgElement.setAttribute('src', book.coverUrl);
+
+    // Add all the elements to the modal.
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(titleElement);
+    modal.appendChild(authorElement);
+    modal.appendChild(imgElement);
+
+    // Add the modal to the container so it will show when the container shows.
+    modalContainer.appendChild(modal);
+
+    // Actually show the dialog.
+    modalContainer.classList.add('is-visible');
+  }
+
+  function hideModal() {
+    modalContainer.classList.remove('is-visible');
+  }
+
+  // Close the modal when Esc is pressed and the modal is showing.
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+      hideModal();
+    }
+  });
+
+  modalContainer.addEventListener('click', (e) => {
+    // Since this is also triggered when clicking INSIDE the modal container,
+    // We only want to close if the user clicks directly on the overlay
+    const target = e.target;
+    if (target === modalContainer) {
+      hideModal();
+    }
+  });
 
   return {
     getAll,
