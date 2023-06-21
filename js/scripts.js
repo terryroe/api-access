@@ -25,7 +25,6 @@ let bookRepository = (function () {
     $('.book-list').append(detailsBtn);
   }
 
-  // Show the details of the book after loading the cover image.
   function showDetails(book) {
     loadCover(book).then(function () {
       showModal(book);
@@ -96,16 +95,16 @@ let bookRepository = (function () {
     $('#loading').text('');
   }
 
-  // Show a modal with the contents of the selected book.
   function showModal(book) {
-    const modal = $('#book-modal');
     $('#book-modal-title').text(book.title);
     $('.modal-body')
       // clear out previous contents
       .text('')
       // repopulate with this book's details
-      .append($('<p>').text(`By: ${book.authors[0]?.name}`))
+      .append($('<p>').text(`By: ${book.authors[0].name}`))
       .append($('<img>').attr('src', book.coverUrl).attr('alt', book.title));
+
+    $('#book-modal').modal();
   }
 
   return {
