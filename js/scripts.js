@@ -94,17 +94,12 @@ let bookRepository = (function () {
   // Show a loading message. (Needs to be formatted better and not push down
   // the list of books when loadCover is called.)
   function showLoadingMessage() {
-    const loading = document.createElement('div');
-    loading.setAttribute('id', 'loading');
-    loading.innerText = 'Loading data...';
-    const body = document.querySelector('body');
-    body.insertBefore(loading, body.firstChild);
+    $('#loading').text('Loading books...');
   }
 
   // Hide the loading message.
   function hideLoadingMessage() {
-    const loading = document.querySelector('#loading');
-    loading.parentElement.removeChild(loading);
+    $('#loading').text('');
   }
 
   // Define the modal container element here so it can be used in multiple
