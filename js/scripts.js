@@ -22,22 +22,15 @@ let bookRepository = (function () {
     });
   }
 
-  // Adds a listItem (<li>) to the list (<ul.book-list>)
+  // Adds a button.list-group-item to the .book-list
   function addListItem(book) {
-    const list = document.querySelector('.book-list');
-    const listItem = document.createElement('li');
-    const button = document.createElement('button');
-    // Set the button text to the title of the book
-    button.innerText = book.title;
+    const detailsBtn = $('<button>')
+      .attr('type', 'button')
+      .addClass('list-group-item list-group-item-action')
+      .text(book.title)
+      .click(() => showDetails(book));
 
-    listItem.appendChild(button);
-    list.appendChild(listItem);
-
-    button.classList.add('book-title-btn');
-    // Add a click listener to the existing button created above
-    button.addEventListener('click', function (event) {
-      showDetails(book);
-    });
+    $('.book-list').append(detailsBtn);
   }
 
   // For now, just log out the book to the console.  More to come.
