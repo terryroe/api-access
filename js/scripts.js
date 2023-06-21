@@ -14,14 +14,6 @@ let bookRepository = (function () {
     }
   }
 
-  // Find books by title.
-  // Returns an array of books that were found.
-  function findBooks(title) {
-    return books.filter(function (book) {
-      return book.title.toLowerCase() === title.toLowerCase();
-    });
-  }
-
   // Adds a button.list-group-item to the .book-list
   function addListItem(book) {
     const detailsBtn = $('<button>')
@@ -33,7 +25,7 @@ let bookRepository = (function () {
     $('.book-list').append(detailsBtn);
   }
 
-  // For now, just log out the book to the console.  More to come.
+  // Show the details of the book after loading the cover image.
   function showDetails(book) {
     loadCover(book).then(function () {
       showModal(book);
@@ -43,7 +35,8 @@ let bookRepository = (function () {
   // Fetch a list of books.  By default, only 32 books are fetched and then
   // the next 'page' would have to be fetched separately.
   function loadList() {
-    showLoadingMessage();
+    showLoadingMessage('Loading books...');
+
     return fetch(apiUrl)
       .then(function (response) {
         return response.json();
@@ -70,7 +63,8 @@ let bookRepository = (function () {
   // second fetch to get just the single book to fulfill the requirements of the
   // exercise.
   function loadCover(item) {
-    showLoadingMessage();
+    showLoadingMessage('Loading details...');
+
     // The individual book is accessed at the same apiUrl, but with the 'id' of
     // the book appended after a slash.
     const url = `${apiUrl}/${item.id}`;
@@ -91,10 +85,10 @@ let bookRepository = (function () {
       });
   }
 
-  // Show a loading message. (Needs to be formatted better and not push down
-  // the list of books when loadCover is called.)
-  function showLoadingMessage() {
-    $('#loading').text('Loading books...');
+  // Show a loading message.
+  // Can be customized via the parameter passed in.
+  function showLoadingMessage(message) {
+    $('#loading').text(message);
   }
 
   // Hide the loading message.
@@ -102,75 +96,22 @@ let bookRepository = (function () {
     $('#loading').text('');
   }
 
-  // Define the modal container element here so it can be used in multiple
-  // functions below.
-  const modalContainer = document.querySelector('#modal-container');
-
+  // Show a modal with the contents of the selected book.
   function showModal(book) {
-    modalContainer.innerHTML = '';
-
-    // Create and set up the modal element.
-    const modal = document.createElement('div');
-    modal.classList.add('modal');
-
-    // Set up the close button, it will be added to the modal a little later.
-    const closeButtonElement = document.createElement('button');
-    closeButtonElement.classList.add('modal-close');
-    closeButtonElement.innerText = 'Close';
-    closeButtonElement.addEventListener('click', hideModal);
-
-    // Set up the title element, to be added later.
-    const titleElement = document.createElement('h1');
-    titleElement.innerText = book.title;
-
-    // Set up the author element, to be added later.
-    const authorElement = document.createElement('p');
-    authorElement.innerText = book.authors[0]?.name;
-
-    // Set up the cover image element, to be added later.
-    const imgElement = document.createElement('img');
-    imgElement.setAttribute('src', book.coverUrl);
-
-    // Add all the elements to the modal.
-    modal.appendChild(closeButtonElement);
-    modal.appendChild(titleElement);
-    modal.appendChild(authorElement);
-    modal.appendChild(imgElement);
-
-    // Add the modal to the container so it will show when the container shows.
-    modalContainer.appendChild(modal);
-
-    // Actually show the dialog.
-    modalContainer.classList.add('is-visible');
+    const modal = $('#book-modal');
+    $('#book-modal-title').text(book.title);
+    $('.modal-body')
+      // clear out previous contents
+      .text('')
+      // repopulate with this book's details
+      .append($('<p>').text(`By: ${book.authors[0]?.name}`))
+      .append($('<img>').attr('src', book.coverUrl).attr('alt', book.title));
   }
-
-  function hideModal() {
-    modalContainer.classList.remove('is-visible');
-  }
-
-  // Close the modal when Esc is pressed and the modal is showing.
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-      hideModal();
-    }
-  });
-
-  modalContainer.addEventListener('click', (e) => {
-    // Since this is also triggered when clicking INSIDE the modal container,
-    // We only want to close if the user clicks directly on the overlay
-    const target = e.target;
-    if (target === modalContainer) {
-      hideModal();
-    }
-  });
 
   return {
     getAll,
-    add,
-    findBooks,
     addListItem,
     loadList,
-    loadCover,
   };
 })();
 
