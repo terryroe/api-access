@@ -13,14 +13,17 @@ An application to access the [Gutendex API](https://gutendex.com/) and display i
 
 There are two polyfill libraries used in the project to allow functionality in older browsers:
 
-1. promise-polyfill: Adds support for Promises in older browsers.
-2. fetch-polyfill: Adds support for Fetch API in older browsers.
+1. jQuery: Needed for Bootstrap.
+2. Popper: Needed for Bootstrap.
+3. Bootstrap: For modals, layout and styling.
+4. promise-polyfill: Adds support for Promises in older browsers.
+5. fetch-polyfill: Adds support for Fetch API in older browsers.
 
 ## Screenshots
 
 ### Main Interface
-<img width="464" alt="Screen Shot 2023-06-17 at 12 56 07 PM" src="https://github.com/terryroe/bookdex/assets/59881/eb6d66c2-6b63-421b-b34b-f74fc6082ae8">
+<img width="421" alt="Screen Shot 2023-06-21 at 1 36 48 PM" src="https://github.com/terryroe/bookdex/assets/59881/a205bbec-f311-4dd5-a878-8ec407afed11">
 
 ### Book Details
-<img width="910" alt="Screen Shot 2023-06-17 at 12 57 02 PM" src="https://github.com/terryroe/bookdex/assets/59881/a144e8e1-6790-4970-a923-804b1842b9ae">
+<img width="397" alt="Screen Shot 2023-06-21 at 1 44 06 PM" src="https://github.com/terryroe/bookdex/assets/59881/11abef9c-b05b-43bc-880c-df8d80f66dfa">
 
